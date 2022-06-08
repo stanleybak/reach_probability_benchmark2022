@@ -137,14 +137,20 @@ def main():
     rhs = np.array([min_alt, -log_prob], dtype=float)
 
     # apply output scaling to rhs
-    for i, x in enumerate(rhs):
-        newx = (x * scaling_dict['out_stds'][i] + scaling_dict['out_means'][i])
+    rhs_indices = [alt_index, prob_index] ##### HERE !!!!!!!
+    
+    for i, x in zip(rhs_indices, rhs):
+        newx = (x + scaling_dict['out_means'][i]) / scaling_dict['out_stds'][i]
         rhs[i] = newx
+
+        print(f"rhs {x} -> {newx}")
         
     spec = Specification(mat, rhs)
     res = enumerate_network(init_box, network, spec)
 
     print(f"result in {res.total_secs} was: {res.result_str}")
+
+    print(f"rhs: {rhs}")
 
     ucinput = []
 
