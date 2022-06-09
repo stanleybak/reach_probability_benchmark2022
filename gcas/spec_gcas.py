@@ -79,28 +79,46 @@ def main():
     #trange = (0, 106 * 1/30)
     trange = (105 * 1/30, 105 * 1/30 + 1e-4)
 
-    vt = 540
-    alpha = deg2rad(2.1215)
-    beta = 0
+    if False:
 
-    phi = -pi/8           # Roll angle from wings level (rad)
-    #theta = (-math.pi/2)*0.3         # Pitch angle from nose level (rad)
-    theta = 0         # Pitch angle from nose level (rad)
-    psi = 0   # Yaw angle from North (rad)
+        vt = 540
+        alpha = deg2rad(2.1215)
+        beta = 0
 
-    P = 0
-    Q = 0
-    R = 0
+        phi = -pi/8           # Roll angle from wings level (rad)
+        #theta = (-math.pi/2)*0.3         # Pitch angle from nose level (rad)
+        theta = 0         # Pitch angle from nose level (rad)
+        psi = 0   # Yaw angle from North (rad)
 
-    Pn  = 0
-    Pe = 0
-    
-    alt = 1200
-    power = 8
-    
-    pt = [vt, alpha, beta, phi, theta, psi, P, Q, R, Pn, Pe, alt, power]
+        P = 0
+        Q = 0
+        R = 0
 
-    tuples_list = [(x, x) for x in pt] + [trange]
+        Pn  = 0
+        Pe = 0
+
+        alt = 1200
+        power = 8
+
+        pt = [vt, alpha, beta, phi, theta, psi, P, Q, R, Pn, Pe, alt, power]
+
+        tuples_list = [(x, x) for x in pt] + [trange]
+    else:
+        # yue paper init set
+        tuples_list = [(560.0040, 599.9999),
+            (0.0750, 0.1000),
+            (-0.0100, 0.0100),
+            (-0.1000, -0.0750),
+            (-0.9996, -0.5000),
+            (-0.0100, 0.0100),
+            (-0.0100, 0.0100),
+            (-0.0100, 0.0100),
+            (-0.0100, 0.0100),
+            (-0.0100, 0.0100),
+            (-0.0100, 0.0100),
+            (1150.0081, 1199.9975),
+            (0.0002, 0.9998),
+            trange]
 
     # scale input
     for i, tup in enumerate(tuples_list):
@@ -128,7 +146,7 @@ def main():
     # rad 0.2, log_prob 0.2
     alt_index = 12
     prob_index = 0
-    min_alt = 42 # 42.9
+    min_alt = 0 # 42.9
     
     row1 = [1 if i == alt_index else 0 for i in range(14)]
     row2 = [-1 if i == prob_index else 0 for i in range(14)]
@@ -139,9 +157,9 @@ def main():
     # apply output scaling to rhs
     rhs_indices = [alt_index, prob_index] ##### HERE !!!!!!!
     
-    for i, x in zip(rhs_indices, rhs):
-        newx = (x + scaling_dict['out_means'][i]) / scaling_dict['out_stds'][i]
-        rhs[i] = newx
+    for rhs_index, (i, x) in enumerate(zip(rhs_indices, rhs)):
+        newx = (x - scaling_dict['out_means'][i]) / scaling_dict['out_stds'][i]
+        rhs[rhs_index] = newx
 
         print(f"rhs {x} -> {newx}")
         

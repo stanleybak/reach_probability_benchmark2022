@@ -19,7 +19,7 @@ def main():
     'main function'
 
     ### Initial Conditions ###
-    power = 8 # engine power level (0-10)
+    power = 0.5045 # 8 # engine power level (0-10)
 
     # Default alpha & beta
     alpha = deg2rad(2.1215) # Trim Angle of Attack (rad)
@@ -27,8 +27,8 @@ def main():
 
     # Initial Attitude
     alt = 1200        # altitude (ft)
-    vt = 540          # initial velocity (ft/sec)
-    phi = -math.pi/8           # Roll angle from wings level (rad)
+    vt = 560          # initial velocity (ft/sec)
+    phi = -0.0877 #-math.pi/8           # Roll angle from wings level (rad)
     theta = (-math.pi/2)*0.3         # Pitch angle from nose level (rad)
     psi = 0   # Yaw angle from North (rad)
 

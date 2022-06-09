@@ -67,7 +67,7 @@ def main():
     alpha = deg2rad(2.1215)
     beta = 0
 
-    phi = -math.pi/8           # Roll angle from wings level (rad)
+    phi = -0.0877 # -math.pi/8           # Roll angle from wings level (rad)
     #theta = (-math.pi/2)*0.3         # Pitch angle from nose level (rad)
     theta = 0         # Pitch angle from nose level (rad)
     psi = 0   # Yaw angle from North (rad)
@@ -80,7 +80,7 @@ def main():
     Pe = 0
     
     alt = 1200
-    power = 8
+    power = 0.5045 #8
 
     pt = [vt, alpha, beta, phi, theta, psi, P, Q, R, Pn, Pe, alt, power]
     num_inputs = len(pt)
