@@ -77,7 +77,7 @@ def main():
     scaling_dict = get_scaling()
 
     #trange = (0, 106 * 1/30)
-    trange = (105 * 1/30, 105 * 1/30 + 1e-4)
+    trange = (0, 105 * 1/30)
 
     if False:
 
@@ -85,7 +85,7 @@ def main():
         alpha = deg2rad(2.1215)
         beta = 0
 
-        phi = -pi/8           # Roll angle from wings level (rad)
+        phi = -0.5996 #-pi/8           # Roll angle from wings level (rad)
         #theta = (-math.pi/2)*0.3         # Pitch angle from nose level (rad)
         theta = 0         # Pitch angle from nose level (rad)
         psi = 0   # Yaw angle from North (rad)
@@ -94,7 +94,7 @@ def main():
         Q = 0
         R = 0
 
-        Pn  = 0
+        Pn = 0
         Pe = 0
 
         alt = 1200
@@ -105,19 +105,25 @@ def main():
         tuples_list = [(x, x) for x in pt] + [trange]
     else:
         # yue paper init set
-        tuples_list = [(560.0040, 599.9999),
-            (0.0750, 0.1000),
+        tuples_list = [(560.0040, 599.9999), # vt
+            (0.0750, 0.1000), # alpha
+            (-0.0100, 0.0100), # beta
+            (-0.1000, -0.0750), # phi (roll angle)
+                       
+            #(-0.9996, -0.5000), # theta!
+            (-0.88, 0), # theta!
+                       
             (-0.0100, 0.0100),
-            (-0.1000, -0.0750),
-            (-0.9996, -0.5000),
             (-0.0100, 0.0100),
             (-0.0100, 0.0100),
             (-0.0100, 0.0100),
             (-0.0100, 0.0100),
             (-0.0100, 0.0100),
-            (-0.0100, 0.0100),
-            (1150.0081, 1199.9975),
-            (0.0002, 0.9998),
+                       
+            #(1150.0081, 1199.9975), # alt
+            (1100, 1200), # alt
+                       
+            (0.0002, 0.9998), # pow
             trange]
 
     # scale input
@@ -128,6 +134,8 @@ def main():
         tuples_list[i] = (lb, ub)
     
     init_box = np.array(tuples_list, dtype=float)
+
+    print(f"scaled init box: {init_box}")
     #init_box = np.array([[0.9, 1.1], [0.9, 1.1], [0, 5.0]], dtype=float)
     #init_box = np.array([[-2.5, 2.5], [-2.5, 2.5], [0, 5.0]], dtype=float)
 
@@ -140,7 +148,7 @@ def main():
         network = load_onnx_network(onnx_filename)
 
     # spec, state is near the origin and probability is above a threshold
-    log_prob = -9999
+    log_prob = 0
 
     # rad 0.1, log_prob = 0.07
     # rad 0.2, log_prob 0.2
@@ -160,36 +168,33 @@ def main():
     for rhs_index, (i, x) in enumerate(zip(rhs_indices, rhs)):
         newx = (x - scaling_dict['out_means'][i]) / scaling_dict['out_stds'][i]
         rhs[rhs_index] = newx
-
-        print(f"rhs {x} -> {newx}")
         
     spec = Specification(mat, rhs)
     res = enumerate_network(init_box, network, spec)
 
     print(f"result in {res.total_secs} was: {res.result_str}")
 
-    print(f"rhs: {rhs}")
+    if res.result_str != 'safe':
+        ucinput = []
 
-    ucinput = []
+        if res.cinput:
+            for i, x in enumerate(res.cinput):
+                u = x * scaling_dict['in_stds'][i] + scaling_dict['in_means'][i]
+                ucinput.append(u)
 
-    if res.cinput:
-        for i, x in enumerate(res.cinput):
-            u = x * scaling_dict['in_stds'][i] + scaling_dict['in_means'][i]
-            ucinput.append(u)
+        print(f"\nunscaled cinput: {ucinput}")
 
-    print(f"\nunscaled cinput: {ucinput}")
-    
-    print(f"\ncinput: {res.cinput}")
-    print(f"\ncoutput: {res.coutput}")
+        print(f"\ncinput: {res.cinput}")
+        print(f"\ncoutput: {res.coutput}")
 
-    ucoutput = []
+        ucoutput = []
 
-    if res.coutput:
-        for i, x in enumerate(res.coutput):
-            u = x * scaling_dict['out_stds'][i] + scaling_dict['out_means'][i]
-            ucoutput.append(u)
+        if res.coutput:
+            for i, x in enumerate(res.coutput):
+                u = x * scaling_dict['out_stds'][i] + scaling_dict['out_means'][i]
+                ucoutput.append(u)
 
-    print(f"\nunscaled coutput: {ucoutput}")
+        print(f"\nunscaled coutput: {ucoutput}")
     
         
 if __name__ == "__main__":

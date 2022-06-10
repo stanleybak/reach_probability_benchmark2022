@@ -85,7 +85,10 @@ def main():
     pt = [vt, alpha, beta, phi, theta, psi, P, Q, R, Pn, Pe, alt, power]
     num_inputs = len(pt)
 
-    state = np.array([pt], dtype=float)
+    print("!!! override pt !!!")
+    pt = [599.9999, 0.075, -0.01, -0.08820618284362454, -0.5996,
+          #0.01, 0.01, 0.01, -0.01, -0.01, -0.01, 1150.0081, 0.9998]
+          0.01, 0.01, 0.01, -0.01, -0.01, -0.01, 1150.0081, 0.9998]
 
     dt = 1/30
     steps = 106
@@ -139,7 +142,12 @@ def main():
 
         plt.plot(xs, ys, 'b-', 0.2)
 
+        lb = min(ys)
+        ub = max(ys)
+        plt.ylim(lb, ub) 
+
         plt.title(f"GCAS network prediction {statenames[output_var]}")
+
         plt.savefig(f'gcas_predict{output_var}_{statenames[output_var]}.png')
 
         plt.clf()

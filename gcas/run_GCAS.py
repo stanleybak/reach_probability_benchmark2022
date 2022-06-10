@@ -35,6 +35,10 @@ def main():
     # Build Initial Condition Vectors
     # state = [vt, alpha, beta, phi, theta, psi, P, Q, R, pn, pe, h, pow]
     init = [vt, alpha, beta, phi, theta, psi, 0, 0, 0, 0, 0, alt, power]
+
+    print("!! init override !!")
+    init = [560.004, 0.075, -0.008766038321942879, -0.1, -0.5996, -0.01, -0.01, -0.01, -0.008571254908063456, -0.01, -0.01, 1150.0081, 0.00019999999999997797]
+    
     tmax = 3.51 # simulation time
 
     ap = GcasAutopilot(init_mode='roll', stdout=True, gain_str='old')
@@ -54,6 +58,29 @@ def main():
         plt.clf()
         
         print(f"Made {filename}")
+
+    plt.clf()
+    plot.plot_single(res, 'alt', title='Altitude (ft)')
+    filename = 'alt.png'
+    plt.savefig(filename)
+    print(f"Made {filename}")
+
+    plot.plot_attitude(res)
+    filename = 'attitude.png'
+    plt.savefig(filename)
+    print(f"Made {filename}")
+
+    # plot inner loop controls + references
+    plot.plot_inner_loop(res)
+    filename = 'inner_loop.png'
+    plt.savefig(filename)
+    print(f"Made {filename}")
+
+    # plot outer loop controls + references
+    plot.plot_outer_loop(res)
+    filename = 'outer_loop.png'
+    plt.savefig(filename)
+    print(f"Made {filename}")
 
 if __name__ == '__main__':
     main()

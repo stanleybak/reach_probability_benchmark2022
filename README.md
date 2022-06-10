@@ -26,3 +26,20 @@ log_prob between 0.05 and 0.3
     
 ## GCAS
 
+theta in range (tmax, 0)
+
+with tmax between -1 and -0.5
+
+varscale 
+
+(-0.0100, 0.0100),
+
+easy, *2 medium, *10 hard
+
+## overall
+
+2 hours for vdp
+2 hours for robot
+2 hours for gcas
+
+12 benchmarks each with 10 minute timeout?
