@@ -198,15 +198,15 @@ def main():
 
         for i in range(12):
             spec_path = make_vdp_spec(i)
-            f.write(f'vdp.onnx,{spec_path},10\n')
+            f.write(f'vdp.onnx,{spec_path},600\n')
 
         for i in range(12):
             spec_path = make_robot_spec(i)
-            f.write(f'robot.onnx,{spec_path},10\n')
+            f.write(f'robot.onnx,{spec_path},600\n')
 
         for i in range(12):
             spec_path = make_gcas_spec(i)
-            f.write(f'gcas.onnx,{spec_path},10\n')
+            f.write(f'gcas.onnx,{spec_path},600\n')
 
 if __name__ == '__main__':
     main() 
